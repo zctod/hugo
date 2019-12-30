@@ -1,7 +1,5 @@
 FROM golang:1.13-alpine AS build
 
-ARG CGO=1
-ENV CGO_ENABLED=${CGO}
 ENV GOOS=linux
 ENV GO111MODULE=on
 ENV HUGO_BUILD_TAGS=extended
@@ -12,10 +10,9 @@ COPY . /go/src/github.com/gohugoio/hugo/
 
 # gcc/g++ are required to build SASS libraries for extended version
 RUN apk update && \
-    apk add --no-cache gcc g++ musl-dev && \
-    go get github.com/magefile/mage
+    apk add --no-cache gcc g++ musl-dev
 
-RUN mage hugo && mage install
+RUN go install --tags extended -ldflags="-w -s"
 
 # ---
 
